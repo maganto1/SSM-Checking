@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ch" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>主页</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../static/layui/css/layui.css" th:href="@{/static/layui/css/layui.css}"/>
+    <link rel="stylesheet" type="text/css" href="../../static/css/messages.css" th:href="@{/static/css/messages.css}">
+    <link rel="icon" href="../../static/image/favicoicon.png" sizes="16x16">
+    <script src="../../static/js/jquery.min.js" th:src="@{/static/js/jquery.min.js}"></script>
+    <script src="../../static/layui/layui.js" th:src="@{/static/layui/layui.js}"></script>
+    <script src="../../static/js/script.js" th:src="@{/static/js/script.js}"></script>
+    <style>
+        html,body{
+            height:100%;
+            width:100%;
+            overflow:hidden;
+            margin:0;
+            padding:0;
+        }
+        .container-fluid{
+            margin-right: 0px;
+        }
+        .nav.nav-list.well{
+            /*height: 500px;*/
+            width:150px ;
+        }
+        .left{
+            padding: 0;
+            position:fixed;
+            margin: 0;
+            width:100%;
+            left: 0px;
+            top:-10px;
+        }
+        li{
+            margin-top: 20px;
+        }
+        .rightframe{
+            margin:0px 0px 0px 150px;
+            padding: 0px;
+            /*height:500px;*/
+            border: 0px;
+            width: 90%;
+            height: 100%;
+        }
+        #father{
+            height: 100%;
+        }
+        .left{
+            display: block;
+            width: 0px;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+<div id="father">
+    <div class="container-fluid left">
+        <div class="row-fluid left">
+            <div class="span12 left">
+                <div class="row-fluid left">
+                    <div class="span6 left">
+                        <p class="nav-header">
+                        </p>
+                        <ul class="nav nav-list well" style="height: 100%">
+                            <li class="active">
+                                <a href="#" class="index" name="/tolist" ><span class="glyphicon glyphicon-home"></span> 首页</a> <!--运行时候要将name替换为/的形式-->
+                            </li>
+                            <li>
+                                <a href="#" class="add" name="/toaddStudent"><span class="glyphicon glyphicon-plus-sign"></span> 新增学生</a>
+                            </li>
+                            <li>
+                                <a href="#" class="absent" name="/toaddAbsent"><i class="layui-icon layui-icon-add-circle"></i> 新增缺课</a>
+                            </li>
+                            <li>
+                                <a href="#" id="search"  name="/tosearch"><i class="layui-icon layui-icon-search"></i> 信息查询</a>
+                            </li>
+                            <li>
+                                <a href="#" id="loginOut" name="/loginout"><span class="glyphicon glyphicon-log-out"></span> 退出登录</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <form id="formFrame" hidden target="frame" method="post"></form>
+    <iframe src="search.html" name="frame" class="rightframe"></iframe>
+</div>
+
+
+<script>
+    //页面加载初始化方法
+    $(document).ready(function(){
+        let name = $('.index').attr('name');
+        let $formFrame = $('#formFrame');
+        $formFrame.attr('action',name);
+        $formFrame.submit();
+    });
+
+    $('.index').click(function () {
+        let name = $('.index').attr('name');
+        let $formFrame = $('#formFrame');
+        $formFrame.attr('action',name);
+        $formFrame.submit();
+    })
+
+    $('#search').click(function () {
+        let name = $('#search').attr('name');
+        let $formFrame = $('#formFrame');
+        $formFrame.attr('action', name);
+        $formFrame.submit();
+    })
+
+    $('.add').click(function () {
+        let name = $('.add').attr('name');
+        let $formFrame = $('#formFrame');
+        $formFrame.attr('action',name);
+        $formFrame.submit();
+    })
+
+    $('.absent').click(function () {
+        let name = $('.absent').attr('name');
+        let $formFrame = $('#formFrame');
+        $formFrame.attr('action',name);
+        $formFrame.submit();
+    })
+
+    $('#loginOut').click(function () {
+        layer.confirm('确定退出吗？',function () {
+            let name = $('#loginOut').attr('name');
+            let $formFrame = $('#formFrame');
+            $formFrame.attr('action',name);
+            $formFrame.attr('target','_self')
+            $formFrame.submit();
+        })
+    });
+
+
+</script>
+</body>
+</html>

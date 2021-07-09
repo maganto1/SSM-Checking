@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ch" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta th:http-equiv="Cache-Control" CONTENT="private">
+    <meta charset="UTF-8">
+    <title>用户登录</title>
+    <style>
+        * {
+            padding:0;
+            margin:0;
+        }
+    </style>
+
+    <!-- 核心样式 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../static/css/style01.css" th:href="@{/static/css/style01.css}">
+    <link href="../../static/layui/css/layui.css" th:href="@{/static/layui/css/layui.css}"/>
+    <link rel="icon" href="../../static/image/favicoicon.png" sizes="16x16">
+    <link rel="stylesheet" th:href="@{/static/css/messages.css}" href="../../static/css/messages.css">
+    <script src="../../static/js/jquery.min.js" th:src="@{/static/js/jquery.min.js}"></script>
+    <script src="../../static/js/script.js" th:src="@{/static/js/script.js}"></script>
+</head>
+<!--将父元素的超出部分修剪，避免父元素塌陷-->
+<body style="overflow: hidden">
+    <canvas id="c"></canvas>
+    <div class="container" style="position: absolute" >
+        <div class="card"></div>
+        <div class="card">
+            <h1 style="text-align: center;padding-bottom: 10%">学生考勤管理系统</h1>
+            <h1 class="title">登录</h1>
+            <form th:action="@{/}" method="post" class="formsub">
+                <div class="input-container">
+                    <input type="text" id="eamil" class="login_username" name="loginusername" required="required" />
+                    <label for="eamil">用户名</label>
+                    <div class="bar"></div>
+                </div>
+                <div class="input-container" style="margin-bottom: 10px">
+                    <input type="password" id="pwd" class="login_password" name="loginpassword" required="required" />
+                    <label for="pwd">密码</label>
+                    <div class="bar"></div>
+                </div>
+                <div class="checkbox" style="margin-left:170px;margin-bottom: 50px">
+                    <label>
+                        <input id="remember" name="RememberMe" type="checkbox"> 记住我
+                    </label>
+                </div>
+
+                <div class="button-container">
+                    <button type="button" id="sendSucess" class="btn"><span>登录</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<script th:inline="javascript">
+    $('#sendSucess').on('click', function() {
+        // 限制按钮多次点击
+        $("#sendSucess").attr({"disabled":'disabled'});
+        setTimeout(function(){$("#sendSucess").removeAttr("disabled"); }, 1500);
+        //判断文本框不能为空
+        if ($('.login_username').val()=='' || $('.login_password').val()==''){
+            sendWarningToTop("账号密码不能为空",2000,function () {
+                console.log("空")
+            })
+        }else {
+            $.post('/login',
+                {
+                    'username':$('.login_username').val(),
+                    'password':$('.login_password').val(),
+                    'RememberMe':$('#remember').is(':checked')
+                }, function (data) {
+                console.log(data)
+                    if (data.loginStatus == 'true'){
+                        sendSuccessToTop('登录成功',2000,function () {
+                            console.log('login success');
+                            $('.formsub').submit();
+                        })
+                    }else if (data.loginStatus == 'false'){
+                        sendWarningToTop(data.reason,2000,function () {
+                            console.log("login fail");
+                        })
+                    }
+                }
+            )
+        }
+    })
+
+</script>
+<script>
+    ;(function() {
+        'use strict';
+
+        var c = document.getElementById('c');
+        var ctx = c.getContext('2d');
+        var w = c.width = window.innerWidth;
+        var h = c.height = window.innerHeight;
+        var cx = w / 2;
+        var cy = h / 2;
+        var P = function(x, y) {
+            this.x = x;
+            this.y = y;
+            this.vx = 0;
+            this.vy = 0;
+            this.r = 1 + Math.random() * 10;
+            this.sa = Math.random() * Math.PI * 2;
+            this.ea = Math.random() * Math.PI * 2;
+            this.rt = Math.random() * Math.PI * 2;
+            this.vrt = 0;
+            this.h = 0;
+        };
+        P.prototype = {
+            constructor: P,
+            update: function() {
+                this.vx += Math.random() * 0.1 - 0.05;
+                this.vy += Math.random() * 0.1 - 0.05;
+                this.vrt += Math.random() * 0.02 - 0.01;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.rt += this.vrt;
+
+                var dx = cx - this.x;
+                var dy = cy - this.y;
+                var d = Math.sqrt(dx * dx + dy * dy);
+
+                this.h = dx / d * 360;
+
+                if (this.x < 0) {
+                    this.x = 0;
+                    this.vx *= -1;
+                }
+                if (this.x > w) {
+                    this.x = w;
+                    this.vx *= -1;
+                }
+                if (this.y < 0) {
+                    this.y = 0;
+                    this.vy *= -1;
+                }
+                if (this.y > h) {
+                    this.y = h;
+                    this.vy *= -1;
+                }
+            },
+            render: function(ctx) {
+                ctx.save();
+                ctx.strokeStyle = 'black';
+                ctx.fillStyle = 'hsla(' + this.h + ', 100%, 50%, 0.5)';
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rt);
+                ctx.beginPath();
+                ctx.arc(0, 0, this.r, this.sa, this.ea);
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+            }
+        };
+
+        var ps = [];
+        var p;
+        var ctr = 200;
+
+        for (var i = 0; i < ctr; i++) {
+            p = new P(Math.random() * w, Math.random() * h);
+            ps.push(p);
+        }
+
+        requestAnimationFrame(function loop() {
+            requestAnimationFrame(loop);
+            ctx.clearRect(0, 0, w, h);
+            for (var i = 0; i < ctr; i++) {
+                p = ps[i];
+                p.update();
+                p.render(ctx);
+            }
+            for (var i = 0; i < ctr; i++) {
+                var p1 = ps[i];
+                for (var j = i + 1; j < ctr; j++) {
+                    var p2 = ps[j];
+                    var dx = p1.x - p2.x;
+                    var dy = p1.y - p2.y;
+                    var d = Math.sqrt(dx * dx + dy * dy);
+                    if (d < 50) {
+                        ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        });
+
+    })();
+</script>
+</body>
+</html>

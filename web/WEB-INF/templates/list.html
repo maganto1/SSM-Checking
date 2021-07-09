@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ch" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../../static/layui/css/layui.css" th:href="@{/static/layui/css/layui.css}"/>
+    <link rel="stylesheet" type="text/css" href="../../static/css/messages.css" th:href="@{/static/css/messages.css}">
+    <script src="../../static/js/jquery.min.js" th:src="@{/static/js/jquery.min.js}"></script>
+    <script src="../../static/layui/layui.js" th:src="@{/static/layui/layui.js}"></script>
+    <script src="../../static/js/script.js" th:src="@{/static/js/script.js}"></script>
+    <title>主页</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <h1 style="color: #0D76B4"><i class="layui-icon layui-icon-form" style="font-size: 30px"></i>学生记录</h1>
+            <br>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>学号</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>年龄</th>
+                    <th>班级</th>
+                    <th>是否缺课</th>
+                </tr>
+                </thead>
+                <tbody id="value">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="pageHandler" style="margin-left:30%"></div>
+
+<script th:inline="javascript">
+    layui.use('laypage', function(){
+        var laypage = layui.laypage;
+        //执行一个laypage实例
+        laypage.render({
+            elem: 'pageHandler' //注意，这里是 ID，不用加 # 号
+            ,count: [[${pageCount}]] //数据总数，从服务端得到
+            ,first: '首页'
+            ,last: '尾页'
+            ,theme:'#49b2ff'
+            ,jump: function (obj) {
+                index = (obj.curr - 1) * 10;
+                $.get('/list/' + index,
+                    function (data) {
+                        $('#value').empty()
+                        //for-in给出的是下标,ES6中新增for-of给出的是对象,这里使用of迭代
+                        for (let obj of data) {
+                            let result = "";
+                            result += "<tr>";
+                            result += "<td>" + obj.studentID + "</td>";
+                            result += "<td>" + obj.name + "</td>";
+                            result += "<td>" + obj.sex + "</td>";
+                            result += "<td>" + obj.age + "</td>";
+                            result += "<td>" + obj.classNum + "</td>";
+                            if (obj.absentType == "是"){
+                                result += "<td><i class='layui-icon layui-icon-face-cry' style='color: #ee0028;font-size: 20px'></i> " + obj.absentType + "</td>";
+                            }else {
+                                result += "<td><i class='layui-icon layui-icon-face-smile' style='color: #29b16f;font-size: 20px'></i> " + obj.absentType + "</td>";
+                            }
+
+                            result += "</tr>";
+                            $('#value').append(result);
+                        }
+                    }
+                )
+            }
+        });
+    });
+
+
+</script>
+
+</body>
+</html>

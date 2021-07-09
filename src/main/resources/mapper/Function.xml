@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.dao.Function">
+
+    <insert id="addStudent" parameterType="student">
+        insert into checking.student values (#{student.studentID},#{student.name},#{student.sex},#{student.age},#{student.classNum})
+    </insert>
+
+    <insert id="addAbsent" parameterType="absent">
+        insert into checking.absent(checkData, period, courseName, studentName, absentType,studentID)
+        values (#{absent.checkData},#{absent.period},#{absent.courseName},#{absent.studentName},#{absent.absentType},#{absent.studentID})
+    </insert>
+
+
+</mapper>
